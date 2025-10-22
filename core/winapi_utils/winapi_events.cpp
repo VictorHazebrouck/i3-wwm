@@ -1,10 +1,10 @@
 #include "./winapi_utils.hpp"
 #include <windows.h>
-#include <iostream>        
+#include <iostream>
 
 namespace core::winapi_utils::events {
     static WindowCallback *s_on_window_created_callback = nullptr;
-    
+
     void CALLBACK winevent_obj_shown_proc(HWINEVENTHOOK, DWORD, HWND hwnd, LONG, LONG, DWORD, DWORD) {
         if(!core::winapi_utils::window::is_real(hwnd)) {
             return;
@@ -34,7 +34,7 @@ namespace core::winapi_utils::events {
 
 namespace core::winapi_utils::events {
     static WindowCallback *s_on_window_destroyed_callback = nullptr;
-    
+
     void CALLBACK winevent_obj_destroyed_proc(
         HWINEVENTHOOK, DWORD,
         HWND hwnd,
@@ -54,9 +54,9 @@ namespace core::winapi_utils::events {
             std::cerr << "Error: `on_window_destroyed` callback already registered!\n";
             std::terminate();
         }
-        
+
         s_on_window_destroyed_callback = new WindowCallback(std::move(callback));
-        
+
         HWINEVENTHOOK hook = SetWinEventHook(
             EVENT_OBJECT_DESTROY, EVENT_OBJECT_DESTROY,
             NULL,
@@ -64,7 +64,7 @@ namespace core::winapi_utils::events {
             0, 0,
             WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS
         );
-        
+
         return [hook]() {
             UnhookWinEvent(hook);
             delete s_on_window_destroyed_callback;
@@ -112,7 +112,7 @@ namespace core::winapi_utils::events {
 
 namespace core::winapi_utils::events {
     static KeyCallback *s_on_key_down_callback = nullptr;
-    
+
     static LRESULT CALLBACK winevent_key_down_proc(int key_code, WPARAM w_param, LPARAM l_param) {
         if ((w_param == WM_SYSKEYDOWN || w_param == WM_KEYDOWN) && s_on_key_down_callback) {
             KBDLLHOOKSTRUCT* key = reinterpret_cast<KBDLLHOOKSTRUCT*>(l_param);
@@ -126,11 +126,11 @@ namespace core::winapi_utils::events {
             std::cerr << "Error: `on_key_down` callback already registered!\n";
             std::terminate();
         }
-        
+
         s_on_key_down_callback = new KeyCallback(std::move(callback));
-        
+
         HHOOK hook = SetWindowsHookEx(WH_KEYBOARD_LL, winevent_key_down_proc, nullptr, 0);
-        
+
         return [hook]() {
             UnhookWindowsHookEx(hook);
             delete s_on_key_down_callback;
@@ -155,11 +155,11 @@ namespace core::winapi_utils::events {
             std::cerr << "Error: `on_key_up` callback already registered!\n";
             std::terminate();
         }
-        
+
         s_on_key_up_callback = new KeyCallback(std::move(callback));
-        
+
         HHOOK hook = SetWindowsHookEx(WH_KEYBOARD_LL, winevent_key_up_proc, nullptr, 0);
-        
+
         return [hook]() {
             UnhookWindowsHookEx(hook);
             delete s_on_key_up_callback;
@@ -167,7 +167,7 @@ namespace core::winapi_utils::events {
     };
 }
 
-namespace core::winapi_utils::events {   
+namespace core::winapi_utils::events {
     void start_msg_loop(bool *should_stop) {
         MSG msg;
         while (false == (*should_stop)) {

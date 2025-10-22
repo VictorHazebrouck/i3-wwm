@@ -1,9 +1,9 @@
 #pragma once
 
-#include <vector> 
+#include <vector>
 #include <string>
 #include <functional>
-// barrel export ish the relevant windows.h type definitions 
+// barrel export ish the relevant windows.h type definitions
 
 typedef unsigned int UINT;
 
@@ -20,7 +20,7 @@ namespace core::winapi_utils{
             inline const WINDOW_HANDLE TOPMOST = (WINDOW_HANDLE)-1;
             inline const WINDOW_HANDLE NOTOPMOST = (WINDOW_HANDLE)-2;
         }
-        
+
         namespace FLAGS {
             enum Enum : UINT {
                 NOSIZE = 0x0001,
@@ -40,31 +40,31 @@ namespace core::winapi_utils{
                 ASYNCWINDOWPOS = 0x4000,
             };
         }
-        
+
         WINDOW_HANDLE get_focused();
         std::vector<WINDOW_HANDLE> get_all();
         std::string get_title(WINDOW_HANDLE hwnd);
         std::string get_class_name(WINDOW_HANDLE hwnd);
-        
+
         bool is_real(WINDOW_HANDLE hwnd);
-        
+
         void destroy(WINDOW_HANDLE hwnd);
         void focus(WINDOW_HANDLE hwnd);
-        
+
         void set_windowed(WINDOW_HANDLE hwnd);
         void set_fullscreen(WINDOW_HANDLE hwnd);
         void set_minimized(WINDOW_HANDLE hwnd);
         void set_pos(
             WINDOW_HANDLE hwnd,
-            WINDOW_HANDLE hwnd_insert_after, 
-            int x, int y, 
+            WINDOW_HANDLE hwnd_insert_after,
+            int x, int y,
             int width, int height,
             FLAGS::Enum window_flags
         );
 
         void debug(WINDOW_HANDLE hwnd);
     }
-    
+
     namespace screen {
         int get_width();
         int get_height();
